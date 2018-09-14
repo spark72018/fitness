@@ -8,7 +8,6 @@ module.exports = app => {
   app.get('/api/spotify/user_playlists', async (req, res) => {
     console.log('/api/spotify/user_playlists');
     console.log('req.user is', req.user);
-
     const { accessToken, refreshToken, profileID } = req.user;
     spotifyApi.setAccessToken(accessToken);
     spotifyApi.setRefreshToken(refreshToken);
@@ -17,22 +16,20 @@ module.exports = app => {
     });
     userInfo
       .then(info => {
-        console.log('promise info is', info);
-        // console.log('info.body.items is', info.body.items);
-
+        // console.log('promise info is', info);
         const { items } = info.body;
         const playlists = items.map(getPlaylistInfo);
 
-        console.log('playlists', playlists);
-        res.send({ playlists });
+        // console.log('playlists', playlists);
+        return res.send({ playlists });
       })
       .catch(e => {
-        console.log('promise e is', e);
+        console.log('Attempting to refresh access token', e);
         const { profileID } = req.user;
-        const res = spotifyApi.refreshAccessToken();
-        res
-          .then(res => {
-            const { accessToken } = res.body;
+        const differentAccessToken = spotifyApi.refreshAccessToken();
+        differentAccessToken
+          .then(differentAccessTokenRes => {
+            const { accessToken } = differentAccessTokenRes.body;
             spotifyApi.setAccessToken(accessToken);
 
             const updatedUser = User.findOneAndUpdate(
@@ -41,15 +38,12 @@ module.exports = app => {
             );
             console.log('updatedUser is', updatedUser);
 
-            res.send({ error: 'Could not refresh token!' });
+            return res.send({ error: 'Could not refresh token!' });
           })
           .catch(e => {
             console.log('refreshAccessToken error', e);
+            return res.send(e);
           });
       });
-
-    console.log('user_playlists error', e);
-
-    //   res.status(400).send(e);
   });
 };

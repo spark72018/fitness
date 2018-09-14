@@ -15,7 +15,7 @@ class App extends Component {
 
   async componentDidMount() {
     const res = await this.fetchUser();
-    console.log('res is', res);
+    console.log('App componentDidMount res is', res);
     if (res.notLoggedIn) {
       return this.setAuth(false);
     }
@@ -27,9 +27,8 @@ class App extends Component {
 
   handleSelectChange = e => {
     const [playlistID, user] = e.target.value.split(',');
-    console.log('playlistID', playlistID);
-    console.log('user', user);
-    this.setCurrentPlaylist(playlistID, user);
+    
+    return this.setCurrentPlaylist(playlistID, user);
   };
 
   fetchUser = () => {
@@ -45,7 +44,9 @@ class App extends Component {
   };
 
   setCurrentPlaylist = (playlistID, user) =>
-    this.setState({ currentPlaylist: { playlistID, user } });
+    playlistID === 'none'
+      ? this.setState({ currentPlaylist: null })
+      : this.setState({ currentPlaylist: { playlistID, user } });
 
   setSpotifyUser = spotifyUser => this.setState({ spotifyUser });
 
