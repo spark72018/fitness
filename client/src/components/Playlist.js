@@ -5,7 +5,7 @@ export default class Playlist extends Component {
   async componentDidMount() {
     const { fetchUserPlaylists, setPlaylists } = this.props;
     const { playlists } = await fetchUserPlaylists();
-    console.log('Playlist', playlists);
+    console.log('Playlist componentDidMount playlists', playlists);
     return setPlaylists(playlists);
   }
 
