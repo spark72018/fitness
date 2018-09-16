@@ -21,11 +21,10 @@ module.exports = app => {
     });
     userInfo
       .then(info => {
-        // console.log('promise info is', info);
         const { items } = info.body;
+        // getPlaylistInfo returns object { id, name, owner };
         const playlists = items.map(getPlaylistInfo);
 
-        // console.log('playlists', playlists);
         return res.send({ playlists });
       })
       .catch(e => {
@@ -34,7 +33,7 @@ module.exports = app => {
         const differentAccessToken = spotifyApi.refreshAccessToken();
         differentAccessToken
           .then(async differentAccessTokenRes => {
-              console.log('differentAccessTokenRes is', differentAccessTokenRes);
+            console.log('differentAccessTokenRes is', differentAccessTokenRes);
             const { access_token } = differentAccessTokenRes.body;
             spotifyApi.setAccessToken(access_token);
 
@@ -42,15 +41,15 @@ module.exports = app => {
               { profileID },
               { $set: { accessToken } }
             );
-            console.log('updatedUser is', updatedUser);
+            // console.log('updatedUser is', updatedUser);
 
             const secondAttempt = await spotifyApi.getUserPlaylists(profileID, {
-                limit: 50
-              });
-            const {items} = secondAttempt.body;
+              limit: 50
+            });
+            const { items } = secondAttempt.body;
             const playlists = items.map(getPlaylistInfo);
 
-            return res.send({playlists});
+            return res.send({ playlists });
           })
           .catch(e => {
             console.log('refreshAccessToken error', e);

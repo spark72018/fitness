@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const Routine = require('./Routine');
+
+const Routines = require('./Routine');
 
 const userSchema = new Schema({
   profileID: String,
   accessToken: String,
   refreshToken: String,
-  routines: [Routine]
+  routines: [Routines]
 });
 
 mongoose.model('users', userSchema);

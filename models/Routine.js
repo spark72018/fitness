@@ -1,10 +1,14 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const Exercise = require('./Exercise');
 
 const routineSchema = new Schema({
   routineName: String,
-  exercises: [Exercise]
+  exercises: [{
+    exerciseName: String,
+    reps: Number,
+    sets: Number
+  }],
+  datesCompleted: [Date]
 });
 
 mongoose.model('routines', routineSchema);

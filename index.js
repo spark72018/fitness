@@ -23,6 +23,23 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// auto-auth in test environment
+if (process.env.NODE_ENV === 'test') {
+  const {
+    userDataWithRoutines,
+    userDataWithNoRoutines
+  } = require('./test_data/testUserData');
+  app.use((req, res, next) => {
+    const profileIdWithRoutines = userDataWithRoutines.profileID;
+    const profileIdWithNoRoutines = userDataWithNoRoutines.profileID;
+    req.user = {
+      profileIdWithRoutines,
+      profileIdWithNoRoutines
+    };
+    next();
+  });
+}
+
 require('./routes/authRoutes')(app);
 require('./routes/spotifyRoutes')(app);
 
@@ -40,7 +57,10 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-mongoose.connect(mongoURI, { useNewUrlParser: true });
+mongoose.connect(
+  mongoURI,
+  { useNewUrlParser: true }
+);
 
 const PORT = process.env.PORT || 5000;
 
