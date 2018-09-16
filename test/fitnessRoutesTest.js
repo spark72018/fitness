@@ -23,16 +23,18 @@ describe('GET fitness routines test', () => {
   const { userDataWithRoutines, userDataWithoutRoutines } = testUserData;
   const savedUsers = { userWithRoutines: null, userWithoutRoutines: null };
 
-    before(async () => {
-      savedUsers.userWithoutRoutines = await new User(
-        userDataWithoutRoutines
-      ).save();
-      savedUsers.userWithRoutines = await new User(userDataWithRoutines).save();
-    });
+  before(async () => {
+    const dbResponse = await Promise.all([
+      new User(userDataWithoutRoutines).save(),
+      new User(userDataWithRoutines).save()
+    ]);
+    savedUsers.userWithoutRoutines = dbResponse[0];
+    savedUsers.userWithRoutines = dbResponse[1];
+  });
 
-    after(async () => {
-      await User.collection.drop();
-    });
+  after(async () => {
+    await User.collection.drop();
+  });
 
   describe('routines successfully queried from db', () => {
     it('should return successful response for user with routines', async () => {
@@ -57,13 +59,12 @@ describe('GET fitness routines test', () => {
 
   describe('routines successfully modified from db', () => {
     const addRoutineRoute = '/api/add_routine';
-    const removeRoutineRoute = '/api/remove_routine';
     const extraRoutine = new Routine({
       routineName: 'anotherRoutine',
       exercises: [{ exerciseName: 'LOLS', reps: 10, sets: 3 }],
       datesCompleted: []
     });
-    const routineToBeDeleted = 'firstRoutine';
+
     it('should add a routine to user who already has routines', async () => {
       const resBeforeChange = await chai
         .request(route)
@@ -83,6 +84,8 @@ describe('GET fitness routines test', () => {
     it('should remove a routine from user who already has routines', async () => {
       const hasRoutine = name => obj => obj.routineName === name;
       const hasFirstRoutine = 'firstRoutine';
+      const removeRoutineRoute = '/api/remove_routine';
+      const routineToBeDeleted = 'firstRoutine';
       const resBeforeChange = await chai
         .request(route)
         .get('/api/user_routines');
@@ -99,7 +102,7 @@ describe('GET fitness routines test', () => {
     });
 
     it('should remove exercise from a routine', async () => {
-        // can change name, sets, or reps
+      // can change name, sets, or reps
     });
   });
 });
