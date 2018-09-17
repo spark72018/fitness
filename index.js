@@ -30,10 +30,10 @@ if (process.env.NODE_ENV === 'test') {
     userDataWithNoRoutines
   } = require('./test_data/testUserData');
   app.use((req, res, next) => {
-    const profileIdWithRoutines = userDataWithRoutines.profileID;
+    const profileID = userDataWithRoutines.profileID;
     const profileIdWithNoRoutines = userDataWithNoRoutines.profileID;
     req.user = {
-      profileIdWithRoutines,
+      profileID,
       profileIdWithNoRoutines
     };
     next();
@@ -42,6 +42,7 @@ if (process.env.NODE_ENV === 'test') {
 
 require('./routes/authRoutes')(app);
 require('./routes/spotifyRoutes')(app);
+require('./routes/fitnessRoutes')(app);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
@@ -51,7 +52,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 
   const path = require('path');
-  // catch-all for unmatched routes
+  // catch-all for unmatched routes, just serve index.html
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
   });
