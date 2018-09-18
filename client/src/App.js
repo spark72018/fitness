@@ -2,32 +2,42 @@ import React, { Component } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Playlist from './components/Playlist';
+import Landing from './components/Landing';
+import Dashboard from './components/Dashboard';
+import Routine from './components/Routine';
 import Button from './components/Button';
 import './App.css';
 
 class App extends Component {
   state = {
     auth: false,
+    routines: [],
     spotifyUser: false,
     playlists: [],
     currentPlaylist: null
   };
 
   async componentDidMount() {
-    const res = await this.fetchUser();
-    console.log('App componentDidMount res is', res);
-    if (res.notLoggedIn) {
-      return this.setAuth(false);
+    try {
+      const res = await this.fetchUser();
+      // console.log('App componentDidMount res is', res);
+      const { routines } = res;
+      if (res.notLoggedIn) {
+        return this.setAuth(false);
+      }
+      if (res.spotifyUser) {
+        this.setSpotifyUser(true);
+      }
+      this.setAuth(true);
+      this.setRoutines(routines);
+    } catch (e) {
+      throw new Error(e);
     }
-    if (res.spotifyUser) {
-      this.setSpotifyUser(true);
-    }
-    this.setAuth(true);
   }
 
   handleSelectChange = e => {
     const [playlistID, user] = e.target.value.split(',');
-    
+
     return this.setCurrentPlaylist(playlistID, user);
   };
 
@@ -48,6 +58,8 @@ class App extends Component {
       ? this.setState({ currentPlaylist: null })
       : this.setState({ currentPlaylist: { playlistID, user } });
 
+  setRoutines = routines => this.setState({ routines });
+
   setSpotifyUser = spotifyUser => this.setState({ spotifyUser });
 
   setPlaylists = playlists => this.setState({ playlists });
@@ -55,20 +67,33 @@ class App extends Component {
   setAuth = auth => this.setState({ auth });
 
   render() {
-    const { auth, spotifyUser, playlists, currentPlaylist } = this.state;
+    const {
+      auth,
+      routines,
+      spotifyUser,
+      playlists,
+      currentPlaylist
+    } = this.state;
     return (
       <BrowserRouter>
         <div className="container">
+          <Header
+            auth={auth}
+            spotifyUser={spotifyUser}
+            setPlaylists={this.setPlaylists}
+          />
           <Route
             exact
             path={`${process.env.PUBLIC_URL}/`}
-            render={() => (
-              <Header
-                auth={auth}
-                spotifyUser={spotifyUser}
-                setPlaylists={this.setPlaylists}
-              />
-            )}
+            render={() => <Landing />}
+          />
+          <Route
+            path={`${process.env.PUBLIC_URL}/dashboard`}
+            render={() => <Dashboard auth={auth} routines={routines} />}
+          />
+          <Route
+            path={`${process.env.PUBLIC_URL}/new_routine`}
+            component={Routine}
           />
           <Route
             path={`${process.env.PUBLIC_URL}/user_playlists`}

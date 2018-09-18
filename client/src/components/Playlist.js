@@ -20,18 +20,20 @@ export default class Playlist extends Component {
   render() {
     const { playlists, handleSelectChange, currentPlaylist } = this.props;
     return (
-      <React.Fragment>
-        <select onChange={handleSelectChange}>
+      <div className="input-field">
+        <select className="browser-default" onChange={handleSelectChange}>
           <option value="none">No playlist selected</option>
           {playlists.map(this.makeOptionTag)}
         </select>
         {currentPlaylist ? (
-          <SpotifyPlayButton
-            user={currentPlaylist.user}
-            id={currentPlaylist.playlistID}
-          />
+          <div className="playlist-container">
+            <SpotifyPlayButton
+              user={currentPlaylist.user}
+              id={currentPlaylist.playlistID}
+            />
+          </div>
         ) : null}
-      </React.Fragment>
+      </div>
     );
   }
 }

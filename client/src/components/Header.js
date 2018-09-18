@@ -7,16 +7,26 @@ export default class Header extends Component {
     return auth && spotifyUser ? (
       <React.Fragment>
         <li>
-          <a href="/api/logout">Logout</a>
+          <Link to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
         </li>
         <li>
-          <Link to={`${process.env.PUBLIC_URL}/user_playlists`}>PLAYLISTS</Link>
+          <Link to={`${process.env.PUBLIC_URL}/user_playlists`}>
+            My Spotify Playlists
+          </Link>
+        </li>
+        <li>
+          <a href="/api/logout">Logout</a>
         </li>
       </React.Fragment>
     ) : auth ? (
-      <li>
-        <a href="/api/logout">Logout</a>
-      </li>
+      <React.Fragment>
+        <li>
+          <Link to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
+        </li>
+        <li>
+          <a href="/api/logout">Logout</a>
+        </li>
+      </React.Fragment>
     ) : (
       <React.Fragment>
         <li>
@@ -32,11 +42,8 @@ export default class Header extends Component {
     return (
       <nav>
         <div className="nav-wrapper">
-          <Link
-            to={this.props.auth ? '/routines' : '/'}
-            className="left brand-logo"
-          >
-            Fitness App Logo
+          <Link to="/" className="left brand-logo">
+            Fitness App
           </Link>
           <ul className="right">{this.renderContent()}</ul>
         </div>

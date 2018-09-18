@@ -1,0 +1,20 @@
+.playlist-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.container {
+    height: 100%;
+}
+
+.container .nav {
+    position: relative;
+}
+
+.row .input-field {
+    margin: 0;
+    margin-top: 5px;
+    text-align: center;
+}
