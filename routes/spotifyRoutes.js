@@ -11,8 +11,8 @@ const User = mongoose.model('users');
 
 module.exports = app => {
   app.get('/api/spotify/user_playlists', async (req, res) => {
-    console.log('/api/spotify/user_playlists');
-    console.log('req.user is', req.user);
+    // console.log('/api/spotify/user_playlists');
+    // console.log('req.user is', req.user);
     const { accessToken, refreshToken, profileID } = req.user;
     spotifyApi.setAccessToken(accessToken);
     spotifyApi.setRefreshToken(refreshToken);
@@ -33,7 +33,7 @@ module.exports = app => {
         const differentAccessToken = spotifyApi.refreshAccessToken();
         differentAccessToken
           .then(async differentAccessTokenRes => {
-            console.log('differentAccessTokenRes is', differentAccessTokenRes);
+            // console.log('differentAccessTokenRes is', differentAccessTokenRes);
             const { access_token } = differentAccessTokenRes.body;
             spotifyApi.setAccessToken(access_token);
 

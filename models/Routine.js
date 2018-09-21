@@ -5,6 +5,7 @@ const routineSchema = new Schema({
   routineName: String,
   exercises: [{
     exerciseName: String,
+    weight: Number,
     reps: Number,
     sets: Number
   }],

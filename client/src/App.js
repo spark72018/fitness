@@ -5,8 +5,17 @@ import Playlist from './components/Playlist';
 import Landing from './components/Landing';
 import Dashboard from './components/Dashboard';
 import Routine from './components/Routine';
-import Button from './components/Button';
+import Workout from './components/Workout';
+import postSaveWorkout from './utilityFns/postSaveWorkout';
+import fetchUser from './utilityFns/fetchUser';
 import './App.css';
+/* TODO
+- can type letters in ExerciseInput, FIX
+- implement loading spinner
+- make <Route/> to a workout page that user can record weight, reps, sets, date
+- make backend route to store info
+
+*/
 
 class App extends Component {
   state = {
@@ -14,14 +23,17 @@ class App extends Component {
     routines: [],
     spotifyUser: false,
     playlists: [],
-    currentPlaylist: null
+    currentPlaylist: null,
+    currentRoutine: null,
+    loadingPlaylists: true
   };
 
   async componentDidMount() {
     try {
-      const res = await this.fetchUser();
-      // console.log('App componentDidMount res is', res);
+      const res = await fetchUser();
+      console.log('App componentDidMount res is', res);
       const { routines } = res;
+      console.log('App.js componentDidMount routines', routines);
       if (res.notLoggedIn) {
         return this.setAuth(false);
       }
@@ -35,22 +47,39 @@ class App extends Component {
     }
   }
 
+  toggleLoadingPlaylists = () =>
+    this.setState({ loadingPlaylists: !this.state.loadingPlaylists });
+
   handleSelectChange = e => {
     const [playlistID, user] = e.target.value.split(',');
 
     return this.setCurrentPlaylist(playlistID, user);
   };
 
-  fetchUser = () => {
-    return fetch('/api/current_user')
-      .then(res => res.json())
-      .catch(e => console.log('caught fetchUser error', e));
+  handleFinishWorkoutClick = async e => {
+    console.log('handleFinishWorkoutClick called');
+    // await postSaveWorkout();
   };
 
-  fetchUserPlaylists = () => {
-    return fetch('/api/spotify/user_playlists')
-      .then(res => res.json())
-      .catch(e => console.log('fetchUserPlaylists error', e));
+  setCurrentRoutine = currentRoutine =>
+    this.setState({ currentRoutine }, () => console.log(this.state));
+
+  handleDashboardClick = e => {
+    const { routines } = this.state;
+    const routineId = e.target.dataset.routineid;
+    const chosenRoutine = routines.find(({ _id }) => _id === routineId);
+
+    return this.setCurrentRoutine(chosenRoutine);
+  };
+
+  handleDashboardEditClick = e => {
+    console.log(e.target.parentNode.previousSibling);
+    const anchorWithId = e.target.parentNode.previousSibling;
+    const routineId = anchorWithId.dataset.routineid;
+    const { routines } = this.state;
+    const chosenRoutine = routines.find(({ _id }) => _id === routineId);
+
+    return this.setCurrentRoutine(chosenRoutine);
   };
 
   setCurrentPlaylist = (playlistID, user) =>
@@ -72,7 +101,9 @@ class App extends Component {
       routines,
       spotifyUser,
       playlists,
-      currentPlaylist
+      currentPlaylist,
+      currentRoutine,
+      loadingPlaylists
     } = this.state;
     return (
       <BrowserRouter>
@@ -89,20 +120,50 @@ class App extends Component {
           />
           <Route
             path={`${process.env.PUBLIC_URL}/dashboard`}
-            render={() => <Dashboard auth={auth} routines={routines} />}
+            render={() => (
+              <Dashboard
+                auth={auth}
+                routines={routines}
+                handleDashboardClick={this.handleDashboardClick}
+                handleDashboardEditClick={this.handleDashboardEditClick}
+              />
+            )}
           />
           <Route
             path={`${process.env.PUBLIC_URL}/new_routine`}
-            component={Routine}
+            render={() => (
+              <Routine auth={auth} setRoutines={this.setRoutines} />
+            )}
+          />
+          <Route
+            path={`${process.env.PUBLIC_URL}/routine`}
+            render={() => (
+              <Routine
+                auth={auth}
+                setRoutines={this.setRoutines}
+                currentRoutine={currentRoutine}
+              />
+            )}
+          />
+          <Route
+            path={`${process.env.PUBLIC_URL}/workout`}
+            render={() => (
+              <Workout
+                currentRoutine={currentRoutine}
+                handleFinishWorkoutClick={this.handleFinishWorkoutClick}
+              />
+            )}
           />
           <Route
             path={`${process.env.PUBLIC_URL}/user_playlists`}
             render={() => (
               <Playlist
+                auth={auth}
+                loadingPlaylists={loadingPlaylists}
                 playlists={playlists}
                 currentPlaylist={currentPlaylist}
                 setPlaylists={this.setPlaylists}
-                fetchUserPlaylists={this.fetchUserPlaylists}
+                toggleLoadingPlaylists={this.toggleLoadingPlaylists}
                 handleSelectChange={this.handleSelectChange}
               />
             )}

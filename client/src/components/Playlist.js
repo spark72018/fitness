@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import SpotifyPlayButton from './SpotifyPlayButton';
+import fetchSpotifyPlaylists from '../utilityFns/fetchSpotifyPlaylists';
 
 export default class Playlist extends Component {
   async componentDidMount() {
-    const { fetchUserPlaylists, setPlaylists } = this.props;
-    const { playlists } = await fetchUserPlaylists();
+    const { playlists } = await fetchSpotifyPlaylists();
     console.log('Playlist componentDidMount playlists', playlists);
-    return setPlaylists(playlists);
+    this.props.toggleLoadingPlaylists();
+    return this.props.setPlaylists(playlists);
   }
 
   makeOptionTag({ id, name, owner }, idx) {
@@ -19,12 +20,21 @@ export default class Playlist extends Component {
 
   render() {
     const { playlists, handleSelectChange, currentPlaylist } = this.props;
-    return (
-      <div className="input-field">
-        <select className="browser-default" onChange={handleSelectChange}>
-          <option value="none">No playlist selected</option>
-          {playlists.map(this.makeOptionTag)}
-        </select>
+    return this.props.loadingPlaylists ? (
+      <div className="progress">
+        <div className="indeterminate" />
+      </div>
+    ) : (
+      <React.Fragment>
+        <div className="input-field z-depth-3">
+          <select
+            className="browser-default collapsible"
+            onChange={handleSelectChange}
+          >
+            <option value="none">No playlist selected</option>
+            {playlists.map(this.makeOptionTag)}
+          </select>
+        </div>
         {currentPlaylist ? (
           <div className="playlist-container">
             <SpotifyPlayButton
@@ -33,7 +43,7 @@ export default class Playlist extends Component {
             />
           </div>
         ) : null}
-      </div>
+      </React.Fragment>
     );
   }
 }

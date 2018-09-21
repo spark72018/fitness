@@ -58,7 +58,6 @@ passport.use(
 
     async (accessToken, refreshToken, expires_in, profile, done) => {
       try {
-        console.log('spotify profile info', profile);
         const existingUser = await User.findOne({ profileID: profile.id });
 
         if (existingUser) {

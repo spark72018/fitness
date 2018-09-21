@@ -41,9 +41,9 @@ export default class Header extends Component {
   render() {
     return (
       <nav>
-        <div className="nav-wrapper">
-          <Link to="/" className="left brand-logo">
-            Fitness App
+        <div className="nav-wrapper blue">
+          <Link style={{ 'fontFamily': 'Dancing Script, cursive' }} to="/" className="left brand-logo">
+            FitMuse
           </Link>
           <ul className="right">{this.renderContent()}</ul>
         </div>

@@ -21,9 +21,11 @@ module.exports = app => {
 
   app.post('/api/add_routine', requireLogin, async (req, res) => {
     try {
-      //   console.log('req.body is', req.body);
+      console.log('/api/add_routine');
+      console.log('req.body is', req.body);
       const { profileID } = req.user;
       const { routineName, exercises } = req.body;
+
       const routineToBeAdded = new Routine({
         routineName,
         exercises,
@@ -35,7 +37,8 @@ module.exports = app => {
         { new: true }
       );
       //   console.log('updatedUser is', updatedUser);
-      return res.send(updatedUser);
+      const { routines } = updatedUser;
+      return res.send({ profileID, routines });
     } catch (e) {
       res.send({ error: e });
     }
@@ -55,6 +58,31 @@ module.exports = app => {
       return res.send(updatedUser);
     } catch (e) {
       return res.send({ error: e });
+    }
+  });
+
+  app.post('/api/modify_routine', requireLogin, async (req, res) => {
+    try {
+      // console.log('/api/modify_routine body', req.body);
+      const { _id, routineName, exercises } = req.body;
+      const { profileID } = req.user;
+
+      const updatedUser = await User.findOneAndUpdate(
+        { profileID, 'routines._id': mongoose.Types.ObjectId(_id) },
+        {
+          $set: {
+            'routines.$.routineName': routineName,
+            'routines.$.exercises': exercises
+          }
+        },
+        { new: true }
+      );
+
+      // console.log('modify routine updatedUser', updatedUser);
+      res.send({ profileID, routines: updatedUser.routines });
+    } catch (e) {
+      console.log('modify routine error', e);
+      res.send({ error: e });
     }
   });
 
@@ -92,11 +120,15 @@ module.exports = app => {
         },
         { new: true }
       );
-    //   console.log('updatedUser', updatedUser.routines[0]);
+      //   console.log('updatedUser', updatedUser.routines[0]);
       res.send(updatedUser);
     } catch (e) {
       console.log('/api/remove_exercise error', e);
       return res.send({ error: e });
     }
+  });
+
+  app.post('/api/save_workout', requireLogin, async (req, res) => {
+    console.log('/api/save_workout req.body', req.body);
   });
 };
