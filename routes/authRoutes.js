@@ -33,7 +33,7 @@ module.exports = app => {
     '/auth/google/callback',
     passport.authenticate('google'),
     (req, res) => {
-      res.redirect('http://localhost:3000');
+      res.redirect('/');
     }
   );
 
@@ -54,7 +54,7 @@ module.exports = app => {
     '/auth/spotify/callback',
     passport.authenticate('spotify'),
     (req, res) => {
-      res.redirect('http://localhost:3000');
+      res.redirect('/');
     }
   );
 };
