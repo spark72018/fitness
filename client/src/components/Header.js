@@ -30,10 +30,10 @@ export default class Header extends Component {
     ) : (
       <React.Fragment>
         <li>
-          <a href="http://localhost:5000/auth/google">Login With Google</a>
+          <a href="/auth/google">Login With Google</a>
         </li>
         <li>
-          <a href="http://localhost:5000/auth/spotify">Login With Spotify</a>
+          <a href="/auth/spotify">Login With Spotify</a>
         </li>
       </React.Fragment>
     );
