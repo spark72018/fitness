@@ -24,10 +24,6 @@ export default class Routine extends Component {
       routineJustModified: false,
       editMode: currentRoutine ? false : true
     };
-    console.log(
-      'Routine constructor, currentRoutine is',
-      this.props.currentRoutine
-    );
   }
 
   componentDidMount() {
@@ -128,9 +124,9 @@ export default class Routine extends Component {
       this.setState({ fieldsError: false });
     }
 
-    const weight = parseInt(weightStr, 10);
-    const reps = parseInt(repsStr, 10);
-    const sets = parseInt(setsStr, 10);
+    const weight = parseInt(weightStr === '' ? '0' : weightStr, 10);
+    const reps = parseInt(repsStr === '' ? '0' : repsStr, 10);
+    const sets = parseInt(setsStr === '' ? '0' : setsStr, 10);
 
     return { exerciseName, weight, reps, sets };
   };
@@ -150,10 +146,10 @@ export default class Routine extends Component {
 
     const exerciseInputRows = [...this.getAll('.row', form)];
     const exercises = exerciseInputRows.map(this.getExerciseInfo);
-    console.log('exercises', exercises);
+
     if (exercises.includes(null)) return;
     const routineInfo = { routineName, exercises };
-    console.log('routineInfo', routineInfo);
+
     try {
       let res;
       if (currentRoutine) {
@@ -173,7 +169,7 @@ export default class Routine extends Component {
 
   handleEditClick = async () => {
     await this.toggleEditMode();
-    
+
     return this.getAndSetCurrentTotalExercises();
   };
 
