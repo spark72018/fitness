@@ -20,8 +20,8 @@ export default function WorkoutExercise({ info }) {
 
   return (
     <div className="workout-exercise row z-depth-3">
-      <p>{exerciseName}</p>
-      <p>{`Weight: ${weight} lbs`}</p>
+      <h5>{exerciseName}</h5>
+      <p data-weight={weight}>{`Weight: ${weight} lbs`}</p>
       <p>{`${reps} reps per set`}</p>
       {makeRepsSetsInputs(reps, sets)}
     </div>

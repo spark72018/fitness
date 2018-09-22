@@ -1,45 +1,66 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router';
 import WorkoutExercise from './WorkoutExercise';
 import postSaveWorkout from '../utilityFns/postSaveWorkout';
+import { MONTHS_ARRAY } from '../constants';
 
-export default class Workout extends Component {
+class Workout extends Component {
   constructor(props) {
     super(props);
     const { currentRoutine } = this.props;
     this.state = {
-      routineId: currentRoutine ? currentRoutine._id : ''
+      routineId: currentRoutine ? currentRoutine._id : '',
+      routineName: currentRoutine ? currentRoutine.routineName : ''
     };
   }
-  handleSubmit = async e => {
-    e.preventDefault();
-    console.log('handleSubmit clicked');
-    console.log('e.target', e.target.parentNode.childNodes);
-    const childrenOfParent = [...e.target.parentNode.childNodes];
-    // get all divs containing <input>, exclude submit button itself
-    const exerciseContainers = childrenOfParent.filter(
-      ({ nodeName }) => nodeName !== 'BUTTON'
-    );
-    const repsDoneInfo = exerciseContainers.map(parent => {
+
+  makeDateString() {
+    const date = new Date();
+    const monthIndex = date.getMonth();
+    const dateStr = `${
+      MONTHS_ARRAY[monthIndex]
+    } ${date.getDay()}, ${date.getFullYear()}`;
+
+    return dateStr;
+  }
+
+  makeSetsInfoArr(exerciseContainers) {
+    return exerciseContainers.map(parent => {
       const children = [...parent.childNodes];
       const [_exercise, _weight, _repsPerSet, inputContainer] = children;
-      //   console.log('exerciseName', exerciseName);
-      //   console.log('inputContainer', inputContainer);
       const exerciseName = _exercise.innerText;
-      console.log('exerciseName', _exercise);
-      const repsDone = [...inputContainer.childNodes].map(div => {
-        const [_setText, inputEl] = [...div.childNodes];
-        return inputEl.value;
+      const weight = parseInt(_weight.dataset.weight);
+      const setsInfo = [...inputContainer.childNodes].map(div => {
+        const [_setsText, inputEl] = [...div.childNodes];
+        const repsDone = parseInt(inputEl.value, 10);
+        return isNaN(repsDone) ? 0 : repsDone;
       });
-      //   console.log(repsDone);
-      return { exerciseName, repsDone };
+
+      return { exerciseName, weight, setsInfo };
     });
+  }
 
-    console.log(repsDoneInfo);
+  excludeButton(arr) {
+    return arr.filter(({ nodeName }) => nodeName !== 'BUTTON');
+  }
 
+  handleSubmit = async e => {
+    e.preventDefault();
+
+    const childrenOfParent = [...e.target.parentNode.childNodes];
+    // get all divs containing <input>, exclude submit button itself
+    const exerciseContainers = this.excludeButton(childrenOfParent);
+    const setsInfo = this.makeSetsInfoArr(exerciseContainers);
+    const { routineId, routineName } = this.state;
     const res = await postSaveWorkout({
-      repsDoneInfo,
-      routineId: this.state.routineId
+      routineId,
+      routineName,
+      setsInfo,
+      dateCompleted: this.makeDateString()
     });
+
+    this.props.setWorkoutSaved(true);
+    this.props.history.push('/dashboard');
   };
 
   render() {
@@ -59,7 +80,7 @@ export default class Workout extends Component {
               type="submit"
               name="action"
             >
-              Submit
+              Save
               <i className="material-icons right">send</i>
             </button>
           </div>
@@ -70,3 +91,5 @@ export default class Workout extends Component {
     }
   }
 }
+
+export default withRouter(Workout);

@@ -2,6 +2,7 @@ const requireLogin = require('../middlewares/requireLogin');
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
 const Routine = mongoose.model('routines');
+const Workout = mongoose.model('workouts');
 
 module.exports = app => {
   app.get('/api/user_routines', requireLogin, async (req, res) => {
@@ -128,8 +129,31 @@ module.exports = app => {
     }
   });
 
-  // TODO HANDLE SAVED WORKOUTS
+  // COMPLETE THIS ROUTE
+  // REVISIT WORKOUT MODEL TO SEE IF CURRENT FORMAT IS APPROPRIATE
+
   app.post('/api/save_workout', requireLogin, async (req, res) => {
-    console.log('/api/save_workout req.body', req.body);
+    try {
+      console.log('/api/save_workout req.body', req.body);
+      const { routineId, routineName, setsInfo, dateCompleted } = req.body;
+      const { profileID } = req.user;
+      const workout = new Workout({
+        routineId,
+        workoutName: routineName,
+        exercises: setsInfo,
+        dateCompleted
+      });
+      console.log('workout is', workout);
+      const updatedUser = await User.findOneAndUpdate(
+        { profileID },
+        { $push: { workouts: workout } }
+      );
+      const { routines } = updatedUser;
+      console.log('updatedUser is', updatedUser);
+      res.send({ routines, workoutSaved: true });
+    } catch (e) {
+      console.log('/api/save_workout error', e);
+      res.send({ error: e });
+    }
   });
 };

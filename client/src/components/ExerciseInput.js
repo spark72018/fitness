@@ -23,12 +23,11 @@ export default class ExerciseInput extends Component {
   }
 
   handleWeightChange = e => {
-    const inpVal = parseInt(e.target.value, 10);
+    const { value } = e.target;
+    const inpVal = parseInt(value, 10);
 
-    if (!isNaN(inpVal)) {
-      this.setState({ weight: e.target.value });
-    } else if (e.target.value === '') {
-      this.setState({ weight: 0 });
+    if (!isNaN(inpVal) || value === '') {
+      return this.setState({ weight: value });
     }
   };
 
@@ -36,22 +35,20 @@ export default class ExerciseInput extends Component {
     this.setState({ exerciseName: e.target.value });
 
   handleRepsChange = e => {
-    const inpVal = parseInt(e.target.value, 10);
+    const { value } = e.target;
+    const inpVal = parseInt(value, 10);
 
-    if (!isNaN(inpVal)) {
-      this.setState({ reps: e.target.value });
-    } else if (e.target.value === '') {
-      this.setState({ reps: 0 });
+    if (!isNaN(inpVal) || value === '') {
+      return this.setState({ reps: value });
     }
   };
 
   handleSetsChange = e => {
-    const inpVal = parseInt(e.target.value, 10);
+    const { value } = e.target;
+    const inpVal = parseInt(value, 10);
 
-    if (!isNaN(inpVal)) {
-      this.setState({ sets: e.target.value });
-    } else if (e.target.value === '') {
-      this.setState({ sets: 0 });
+    if (!isNaN(inpVal) || value === '') {
+      return this.setState({ sets: value });
     }
   };
 

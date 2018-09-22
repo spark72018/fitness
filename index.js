@@ -44,10 +44,6 @@ require('./routes/authRoutes')(app);
 require('./routes/spotifyRoutes')(app);
 require('./routes/fitnessRoutes')(app);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static('client/build'));
 

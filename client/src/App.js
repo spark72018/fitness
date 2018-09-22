@@ -23,14 +23,15 @@ class App extends Component {
     currentPlaylist: null,
     currentRoutine: null,
     loadingPlaylists: true,
-    failedRemove: false
+    failedRemove: false,
+    workoutSaved: false
   };
 
   async componentDidMount() {
     try {
       const res = await fetchUser();
       console.log('App componentDidMount res is', res);
-      const { routines } = res;
+      const routines = res.routines ? res.routines : [];
       console.log('App.js componentDidMount routines', routines);
       if (res.notLoggedIn) {
         return this.setAuth(false);
@@ -44,6 +45,8 @@ class App extends Component {
       throw new Error(e);
     }
   }
+
+  setWorkoutSaved = bool => this.setState({ workoutSaved: bool });
 
   setFailedRemove = failedRemove => this.setState({ failedRemove });
 
@@ -111,6 +114,10 @@ class App extends Component {
 
   setAuth = auth => this.setState({ auth });
 
+  handleLeave = e => {
+    console.log('leaving page');
+  };
+
   render() {
     const {
       auth,
@@ -120,7 +127,8 @@ class App extends Component {
       currentPlaylist,
       currentRoutine,
       loadingPlaylists,
-      failedRemove
+      failedRemove,
+      workoutSaved
     } = this.state;
     return (
       <BrowserRouter>
@@ -143,6 +151,8 @@ class App extends Component {
                 auth={auth}
                 routines={routines}
                 failedRemove={failedRemove}
+                workoutSaved={workoutSaved}
+                setWorkoutSaved={this.setWorkoutSaved}
                 handleDashboardClick={this.handleDashboardClick}
                 handleDashboardEditClick={this.handleDashboardEditClick}
                 handleDashboardRemoveWorkoutClick={
@@ -169,9 +179,11 @@ class App extends Component {
           />
           <Route
             path={`${process.env.PUBLIC_URL}/workout`}
+            onLeave={this.handleLeave}
             render={() => (
               <Workout
                 currentRoutine={currentRoutine}
+                setWorkoutSaved={this.setWorkoutSaved}
                 handleFinishWorkoutClick={this.handleFinishWorkoutClick}
               />
             )}

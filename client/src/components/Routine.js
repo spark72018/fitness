@@ -117,7 +117,6 @@ export default class Routine extends Component {
   getExerciseInfo = exerciseRowDiv => {
     const inputValues = this.getInputValues(exerciseRowDiv);
     const [nameStr, weightStr, repsStr, setsStr] = inputValues;
-    console.log(nameStr, typeof repsStr, typeof setsStr);
     const exerciseName = nameStr.trim();
 
     // make sure there is exerciseName
