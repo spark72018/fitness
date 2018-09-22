@@ -7,14 +7,11 @@ import Dashboard from './components/Dashboard';
 import Routine from './components/Routine';
 import Workout from './components/Workout';
 import postSaveWorkout from './utilityFns/postSaveWorkout';
+import postRemoveRoutine from './utilityFns/postRemoveRoutine';
 import fetchUser from './utilityFns/fetchUser';
 import './App.css';
 /* TODO
-- can type letters in ExerciseInput, FIX
-- implement loading spinner
-- make <Route/> to a workout page that user can record weight, reps, sets, date
-- make backend route to store info
-
+- add option to remove ROUTINES
 */
 
 class App extends Component {
@@ -25,7 +22,8 @@ class App extends Component {
     playlists: [],
     currentPlaylist: null,
     currentRoutine: null,
-    loadingPlaylists: true
+    loadingPlaylists: true,
+    failedRemove: false
   };
 
   async componentDidMount() {
@@ -46,6 +44,24 @@ class App extends Component {
       throw new Error(e);
     }
   }
+
+  setFailedRemove = failedRemove => this.setState({ failedRemove });
+
+  handleDashboardRemoveWorkoutClick = async e => {
+    try {
+      const routineId = e.target.dataset.routineid;
+      const res = await postRemoveRoutine({ routineId });
+      console.log('res is', res);
+      const { routines } = res;
+      if (!routines.find(({ _id }) => _id === routineId)) {
+        return this.setRoutines(routines);
+      } else {
+        return this.setFailedRemove(true);
+      }
+    } catch (e) {
+      console.log('handleDashboardRemoveWorkoutClick error', e);
+    }
+  };
 
   toggleLoadingPlaylists = () =>
     this.setState({ loadingPlaylists: !this.state.loadingPlaylists });
@@ -103,7 +119,8 @@ class App extends Component {
       playlists,
       currentPlaylist,
       currentRoutine,
-      loadingPlaylists
+      loadingPlaylists,
+      failedRemove
     } = this.state;
     return (
       <BrowserRouter>
@@ -112,6 +129,7 @@ class App extends Component {
             auth={auth}
             spotifyUser={spotifyUser}
             setPlaylists={this.setPlaylists}
+            setFailedRemove={this.setFailedRemove}
           />
           <Route
             exact
@@ -124,8 +142,12 @@ class App extends Component {
               <Dashboard
                 auth={auth}
                 routines={routines}
+                failedRemove={failedRemove}
                 handleDashboardClick={this.handleDashboardClick}
                 handleDashboardEditClick={this.handleDashboardEditClick}
+                handleDashboardRemoveWorkoutClick={
+                  this.handleDashboardRemoveWorkoutClick
+                }
               />
             )}
           />

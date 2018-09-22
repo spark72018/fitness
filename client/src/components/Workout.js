@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import WorkoutExercise from './WorkoutExercise';
+import postSaveWorkout from '../utilityFns/postSaveWorkout';
 
 export default class Workout extends Component {
   constructor(props) {
     super(props);
     const { currentRoutine } = this.props;
     this.state = {
-      routineName: currentRoutine ? currentRoutine.routineName : ''
+      routineId: currentRoutine ? currentRoutine._id : ''
     };
   }
-  handleSubmit = e => {
+  handleSubmit = async e => {
     e.preventDefault();
     console.log('handleSubmit clicked');
     console.log('e.target', e.target.parentNode.childNodes);
@@ -20,18 +21,25 @@ export default class Workout extends Component {
     );
     const repsDoneInfo = exerciseContainers.map(parent => {
       const children = [...parent.childNodes];
-      console.log('children', children);
-      const [exerciseName, _weight, _repsPerSet, inputContainer] = children;
-      console.log('exerciseName', exerciseName);
-      console.log('inputContainer', inputContainer);
+      const [_exercise, _weight, _repsPerSet, inputContainer] = children;
+      //   console.log('exerciseName', exerciseName);
+      //   console.log('inputContainer', inputContainer);
+      const exerciseName = _exercise.innerText;
+      console.log('exerciseName', _exercise);
       const repsDone = [...inputContainer.childNodes].map(div => {
         const [_setText, inputEl] = [...div.childNodes];
         return inputEl.value;
       });
-      console.log(repsDone);
+      //   console.log(repsDone);
       return { exerciseName, repsDone };
     });
-    console.log('repsDoneInfo', repsDoneInfo);
+
+    console.log(repsDoneInfo);
+
+    const res = await postSaveWorkout({
+      repsDoneInfo,
+      routineId: this.state.routineId
+    });
   };
 
   render() {

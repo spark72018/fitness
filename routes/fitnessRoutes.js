@@ -46,15 +46,15 @@ module.exports = app => {
 
   app.post('/api/remove_routine', requireLogin, async (req, res) => {
     try {
-      //   console.log(req.body);
-      const { routineToBeRemoved } = req.body;
+      // console.log('/api/remove_routine', req.body);
+      const { routineId } = req.body;
       const { profileID } = req.user;
       const updatedUser = await User.findOneAndUpdate(
         { profileID },
-        { $pull: { routines: { routineName: routineToBeRemoved } } },
+        { $pull: { routines: { _id: mongoose.Types.ObjectId(routineId) } } },
         { new: true }
       );
-      //   console.log('updatedUser is', updatedUser);
+      // console.log('updatedUser is', updatedUser);
       return res.send(updatedUser);
     } catch (e) {
       return res.send({ error: e });
@@ -128,6 +128,7 @@ module.exports = app => {
     }
   });
 
+  // TODO HANDLE SAVED WORKOUTS
   app.post('/api/save_workout', requireLogin, async (req, res) => {
     console.log('/api/save_workout req.body', req.body);
   });

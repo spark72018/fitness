@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 export default function Dashboard({
   auth,
   routines,
+  failedRemove,
   handleDashboardClick,
-  handleDashboardEditClick
+  handleDashboardEditClick,
+  handleDashboardRemoveWorkoutClick
 }) {
   return (
     <div className="dashboard-container">
@@ -16,6 +18,11 @@ export default function Dashboard({
           <React.Fragment>
             <h4>Currently no routines.</h4>
             <h4>Click the add button to create a new routine!</h4>
+          </React.Fragment>
+        ) : failedRemove ? (
+          <React.Fragment>
+            <h4>Something went wrong.</h4>
+            <h4>Failed to remove routine.</h4>
           </React.Fragment>
         ) : (
           <div className="collection z-depth-3">
@@ -39,6 +46,15 @@ export default function Dashboard({
                   >
                     <i className="large material-icons">edit</i>
                   </Link>
+                  <a className="scale-transition btn-floating btn-medium waves-effect waves-light blue">
+                    <i
+                      data-routineid={_id}
+                      onClick={handleDashboardRemoveWorkoutClick}
+                      className="material-icons"
+                    >
+                      close
+                    </i>
+                  </a>
                 </li>
               ))}
             </ul>

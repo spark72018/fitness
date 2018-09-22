@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 export default class Header extends Component {
   renderContent = () => {
-    const { auth, spotifyUser } = this.props;
+    const { auth, spotifyUser, setFailedRemove } = this.props;
     return auth && spotifyUser ? (
       <React.Fragment>
         <li>
-          <Link to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
+          <Link onClick={() => setFailedRemove(false)} to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
         </li>
         <li>
           <Link to={`${process.env.PUBLIC_URL}/user_playlists`}>
@@ -21,7 +21,7 @@ export default class Header extends Component {
     ) : auth ? (
       <React.Fragment>
         <li>
-          <Link to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
+          <Link onClick={() => setFailedRemove(false)} to={`${process.env.PUBLIC_URL}/dashboard`}>Dashboard</Link>
         </li>
         <li>
           <a href="/api/logout">Logout</a>
