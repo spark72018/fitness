@@ -11,7 +11,6 @@ export default class ExerciseInput extends Component {
   };
 
   componentDidMount() {
-    console.log('ExerciseInput props', this.props);
     if (this.props.exerciseName) {
       const { exerciseName, reps, sets } = this.props;
       return this.setState({

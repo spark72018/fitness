@@ -5,7 +5,7 @@ import fetchSpotifyPlaylists from '../utilityFns/fetchSpotifyPlaylists';
 export default class Playlist extends Component {
   async componentDidMount() {
     const { playlists } = await fetchSpotifyPlaylists();
-    console.log('Playlist componentDidMount playlists', playlists);
+
     this.props.toggleLoadingPlaylists();
     return this.props.setPlaylists(playlists);
   }

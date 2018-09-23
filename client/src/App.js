@@ -30,9 +30,8 @@ class App extends Component {
   async componentDidMount() {
     try {
       const res = await fetchUser();
-      console.log('App componentDidMount res is', res);
       const routines = res.routines ? res.routines : [];
-      console.log('App.js componentDidMount routines', routines);
+
       if (res.notLoggedIn) {
         return this.setAuth(false);
       }
@@ -54,8 +53,8 @@ class App extends Component {
     try {
       const routineId = e.target.dataset.routineid;
       const res = await postRemoveRoutine({ routineId });
-      console.log('res is', res);
       const { routines } = res;
+
       if (!routines.find(({ _id }) => _id === routineId)) {
         return this.setRoutines(routines);
       } else {
@@ -75,13 +74,7 @@ class App extends Component {
     return this.setCurrentPlaylist(playlistID, user);
   };
 
-  handleFinishWorkoutClick = async e => {
-    console.log('handleFinishWorkoutClick called');
-    // await postSaveWorkout();
-  };
-
-  setCurrentRoutine = currentRoutine =>
-    this.setState({ currentRoutine }, () => console.log(this.state));
+  setCurrentRoutine = currentRoutine => this.setState({ currentRoutine });
 
   handleDashboardClick = e => {
     const { routines } = this.state;
@@ -92,7 +85,6 @@ class App extends Component {
   };
 
   handleDashboardEditClick = e => {
-    console.log(e.target.parentNode.previousSibling);
     const anchorWithId = e.target.parentNode.previousSibling;
     const routineId = anchorWithId.dataset.routineid;
     const { routines } = this.state;
@@ -113,10 +105,6 @@ class App extends Component {
   setPlaylists = playlists => this.setState({ playlists });
 
   setAuth = auth => this.setState({ auth });
-
-  handleLeave = e => {
-    console.log('leaving page');
-  };
 
   render() {
     const {
@@ -184,7 +172,6 @@ class App extends Component {
               <Workout
                 currentRoutine={currentRoutine}
                 setWorkoutSaved={this.setWorkoutSaved}
-                handleFinishWorkoutClick={this.handleFinishWorkoutClick}
               />
             )}
           />

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function SpotifyPlayButton({user, id: playlistID}) {
+export default function SpotifyPlayButton({ user, id: playlistID }) {
   return (
     <iframe
       src={`https://open.spotify.com/embed/user/${user}/playlist/${playlistID}`}
