@@ -11,7 +11,7 @@ import postRemoveRoutine from './utilityFns/postRemoveRoutine';
 import fetchUser from './utilityFns/fetchUser';
 import './App.css';
 /* TODO
-- add option to remove ROUTINES
+- add state of all controlled inputs on <Workout/>
 */
 
 class App extends Component {
@@ -22,7 +22,9 @@ class App extends Component {
     playlists: [],
     currentPlaylist: null,
     currentRoutine: null,
+    currentRoutineInputVals: [],
     loadingPlaylists: true,
+    loadingOAuth: false,
     failedRemove: false,
     workoutSaved: false
   };
@@ -39,11 +41,14 @@ class App extends Component {
         this.setSpotifyUser(true);
       }
       this.setAuth(true);
+      this.setLoadingOAuth(false);
       this.setRoutines(routines);
     } catch (e) {
       throw new Error(e);
     }
   }
+
+  setLoadingOAuth = bool => this.setState({ loadingOAuth: bool });
 
   setWorkoutSaved = bool => this.setState({ workoutSaved: bool });
 
@@ -115,6 +120,7 @@ class App extends Component {
       currentPlaylist,
       currentRoutine,
       loadingPlaylists,
+      loadingOAuth,
       failedRemove,
       workoutSaved
     } = this.state;
@@ -124,8 +130,10 @@ class App extends Component {
           <Header
             auth={auth}
             spotifyUser={spotifyUser}
+            loadingOAuth={loadingOAuth}
             setPlaylists={this.setPlaylists}
             setFailedRemove={this.setFailedRemove}
+            setLoadingOAuth={this.setLoadingOAuth}
           />
           <Route
             exact

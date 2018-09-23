@@ -33,6 +33,7 @@ class Workout extends Component {
       const setsInfo = [...inputContainer.childNodes].map(div => {
         const [_setsText, inputEl] = [...div.childNodes];
         const repsDone = parseInt(inputEl.value, 10);
+
         return isNaN(repsDone) ? 0 : repsDone;
       });
 
@@ -40,9 +41,7 @@ class Workout extends Component {
     });
   }
 
-  excludeButton(arr) {
-    return arr.filter(({ nodeName }) => nodeName !== 'BUTTON');
-  }
+  excludeButton = arr => arr.filter(({ nodeName }) => nodeName !== 'BUTTON');
 
   handleSubmit = async e => {
     e.preventDefault();
