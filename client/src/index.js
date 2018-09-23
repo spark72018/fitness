@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
-import registerServiceWorker from './registerServiceWorker';
+import { unregister } from './registerServiceWorker';
 
 ReactDOM.render(
   <ErrorBoundary>
@@ -12,4 +12,4 @@ ReactDOM.render(
   </ErrorBoundary>,
   document.getElementById('root')
 );
-registerServiceWorker();
+unregister();
